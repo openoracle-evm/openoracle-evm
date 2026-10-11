@@ -1,56 +1,36 @@
-# oracle-sdk
+<p align="center">
+  <a href="https://openoracle.codes"><img src="https://openoracle.codes/brand/github-header-1280x400.png" alt="Open Oracle — Intelligence you can own" width="100%"></a>
+</p>
 
-**Open Oracle** · TypeScript SDK for tokenized-stock data.
+<p align="center">
+  <a href="https://openoracle.codes"><img src="https://img.shields.io/badge/website-openoracle.codes-0e0e0e?style=flat-square&labelColor=0e0e0e&color=1f1f1f" alt="Website"></a>
+  <a href="https://x.com/openoracle"><img src="https://img.shields.io/badge/X-@openoracle-0e0e0e?style=flat-square&logo=x&labelColor=0e0e0e&color=1f1f1f" alt="X"></a>
+  <img src="https://img.shields.io/badge/license-MIT-0e0e0e?style=flat-square&labelColor=0e0e0e&color=1f1f1f" alt="MIT">
+  <img src="https://img.shields.io/badge/tests-62%20passing-4ade80?style=flat-square&labelColor=0e0e0e" alt="62 tests passing">
+</p>
 
-- **Real equity prices** from [Pyth](https://pyth.network) (Hermes API)
-- **Market hours** — parses Pyth schedules incl. holidays and half days
-- **Uniswap v3 pool prices** via [viem](https://viem.sh)
-- **Premium / discount** of a tokenized stock vs. its reference price
-- **StockGuardHook fee quotes** — TypeScript port of [`stockguard-hook`](https://github.com/openoracle-evm/stockguard-hook)
+### Tokenized stocks trade 24/7. Stock markets don't.
 
-## Install
+Open Oracle builds open-source tools that keep tokenized-stock markets on Ethereum honest: real reference prices, market hours, and a Uniswap v4 hook that checks every swap.
 
-```bash
-npm install github:openoracle-evm/oracle-sdk viem
+| | Repository | What it does |
+|---|---|---|
+| 🛡️ | [**stockguard-hook**](https://github.com/openoracle-evm/stockguard-hook) | Uniswap v4 hook: market hours, oracle freshness, deviation guard, KYC allowlist. Solidity · Foundry |
+| 📦 | [**oracle-sdk**](https://github.com/openoracle-evm/oracle-sdk) | Pyth equity prices, NYSE hours with holidays, Uniswap pool prices, premium in bps. TypeScript |
+| 📡 | [**stocks-monitor**](https://github.com/openoracle-evm/stocks-monitor) | Tracks tokenized stocks vs. their real price. HTTP + Server-Sent Events API, Docker |
+| 🔔 | [**oracle-alerts**](https://github.com/openoracle-evm/oracle-alerts) | Telegram bot: alerts when a token drifts from its real price, market open/close |
+| 🌐 | [**open-oracle-web**](https://github.com/openoracle-evm/open-oracle-web) | The website, including the StockGuard simulator |
+
+```mermaid
+flowchart LR
+  P[Pyth equity feeds] --> SDK[oracle-sdk]
+  U[Uniswap pools] --> SDK
+  SDK --> M[stocks-monitor]
+  M --> A[oracle-alerts · Telegram]
+  M --> W[openoracle.codes]
+  SDK -. same fee logic .- H[stockguard-hook]
 ```
 
-## Usage
+**Try it:** open the [StockGuard simulator](https://openoracle.codes/#stocks), close the market, shock the price and watch the hook react.
 
-```ts
-import { PythClient, EQUITY_FEEDS, marketStatus, NYSE_SCHEDULE, premiumBps } from "@openoracle/sdk";
-
-const pyth = new PythClient({ apiKey: process.env.PYTH_API_KEY });
-const [nvda] = await pyth.latestPrices([EQUITY_FEEDS.NVDA]);
-
-console.log(nvda.price, marketStatus(NYSE_SCHEDULE));     // 182.41 { open: true, session: "09:30–16:00", ... }
-console.log(premiumBps(183.10, nvda.price));              // +37.8 bps
-```
-
-Read a Uniswap v3 pool:
-
-```ts
-import { createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
-import { readV3Pool, stockPrice } from "@openoracle/sdk";
-
-const client = createPublicClient({ chain: mainnet, transport: http(process.env.RPC_URL) });
-const snap = await readV3Pool(client, "0xPOOL");
-const price = stockPrice(snap, /* stockIsToken0 */ true);
-```
-
-### Pyth API key
-
-Since 2026-08-26 Hermes price endpoints require an API key (`Authorization: Bearer <key>`).
-Get one at the Pyth Terminal (free trial). Feed search and schedules are public.
-
-## Develop
-
-```bash
-npm install
-npm test          # 24 tests
-npm run build
-```
-
-## License
-
-MIT
+<sub>The smart contract is not yet audited. Nothing here is financial advice.</sub>
