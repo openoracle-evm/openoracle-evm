@@ -22,7 +22,6 @@ Open Oracle builds open-source tools that keep tokenized-stock markets on Ethere
 | 🔔 | [**oracle-alerts**](https://github.com/openoracle-evm/oracle-alerts) | Telegram bot: alerts when a token drifts from its real price, market open/close |
 | ⌨️ | [**oracle-cli**](https://github.com/openoracle-evm/oracle-cli) | `oracle price NVDA`, `oracle hours`, `oracle fee` — Open Oracle in your terminal |
 | 🗂️ | [**equity-feeds**](https://github.com/openoracle-evm/equity-feeds) | All 1,250+ Pyth equity feed ids and trading hours as JSON, refreshed daily |
-| 🌐 | [**open-oracle-web**](https://github.com/openoracle-evm/open-oracle-web) | The website, including the StockGuard simulator |
 
 ```mermaid
 flowchart LR
